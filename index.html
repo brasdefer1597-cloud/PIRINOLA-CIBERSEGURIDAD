@@ -3,574 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Mejoras SEO/UX -->
-    <title>Pirinola de Ciberseguridad: Tips Chalamandra y Retos Digitales</title>
-    <meta name="description" content="Juega a la Pirinola de Ciberseguridad y obtén tips rápidos (Phishing, 2FA, VPN) y responde preguntas para convertirte en un Warrior Digital.">
-    <meta name="keywords" content="ciberseguridad, pirinola, juego, quiz, 2fa, phishing, malware, tips digitales">
-    <meta name="author" content="Chalamandra Labs">
-    
-    <!-- Carga Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
-    <!-- Carga Tone.js para sonidos interactivos -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
-    
+    <title>PIRINOLA CIBERSEGURIDAD // CHALAMANDRA OS</title>
     <style>
-        /* Configuración de la fuente Inter para todo el cuerpo */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f7f3f9; /* Un lila muy suave */
-            background-image: radial-gradient(#d8b4fe 1px, transparent 1px);
-            background-size: 20px 20px;
+        :root {
+            --neon-green: #00ff41;
+            --cyber-purple: #bc13fe;
+            --dark-bg: #0d0d0d;
         }
-
-        /* Estilo para la Pirinola (simulando un spinner) */
-        #pirinola-spinner {
-            width: 90%;
-            max-width: 320px;
-            height: 180px;
-            background: linear-gradient(145deg, #6d28d9, #8b5cf6); /* Violeta profundo con gradiente */
-            border-radius: 1.5rem; /* Esquinas redondeadas */
-            box-shadow: 0 10px 20px rgba(109, 40, 217, 0.4), 
-                        inset 0 0 15px rgba(255, 255, 255, 0.5);
-            color: white;
+        body {
+            background-color: var(--dark-bg);
+            color: var(--neon-green);
+            font-family: 'Courier New', monospace;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            text-align: center;
-            padding: 1rem;
-            margin: 0 auto 2rem;
-            transition: transform 3s cubic-bezier(0.17, 0.67, 0.83, 0.67); /* Animación de rotación mejorada */
-            font-size: 1.125rem;
-            font-weight: 700;
-            overflow: hidden; /* Oculta el contenido durante el spin */
-            border: 5px solid #a78bfa; /* Borde más claro */
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        h1 { text-shadow: 0 0 10px var(--neon-green); }
+        
+        /* CONTENEDOR DE LA PIRINOLA */
+        .pirinola-container {
+            width: 200px;
+            height: 200px;
+            perspective: 1000px;
+            margin-bottom: 50px;
+            cursor: pointer;
+        }
+        
+        .pirinola {
+            width: 100%;
+            height: 100%;
             position: relative;
+            transform-style: preserve-3d;
+            transition: transform 3s cubic-bezier(0.1, 0.7, 0.1, 1);
         }
 
-        /* Efecto de brillo en la pirinola */
-        #pirinola-spinner::after {
-            content: '';
+        /* LAS CARAS DEL HEXÁGONO (Simplificado visualmente como cubo giratorio para la demo web) */
+        .face {
             position: absolute;
-            top: -10px;
-            left: -10px;
-            right: -10px;
-            bottom: -10px;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-            z-index: 1;
-            border-radius: 1.5rem;
-        }
-
-        /* Clase de animación para el giro */
-        .spinning {
-            transform: rotate(3600deg);
-            transition: transform 3s cubic-bezier(0.17, 0.67, 0.83, 0.67);
-        }
-
-        /* Estilo del botón */
-        .spin-button {
-            background-color: #ff3864; /* Rosa Chola-Fresa vibrante */
-            border: 4px solid #fff;
-            box-shadow: 0 4px 0 #b91c1c; /* Sombra para efecto 3D */
-            transition: all 0.1s ease-in-out;
-        }
-        .spin-button:hover {
-            background-color: #f91d51;
-            box-shadow: 0 6px 0 #b91c1c;
-            transform: translateY(-2px);
-        }
-        .spin-button:active {
-            box-shadow: 0 0 0 #b91c1c;
-            transform: translateY(2px);
-        }
-        .spin-button:disabled {
-            background-color: #e5e5e5;
-            color: #a3a3a3;
-            box-shadow: none;
-            cursor: not-allowed;
-        }
-
-        /* Estilos del resultado */
-        .result-box {
-            border: 2px solid #3b82f6; /* Borde azul para destacar */
-            background-color: #eff6ff; /* Fondo azul muy claro */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        /* Estilos para el contenedor de preguntas */
-        .question-box {
-            border: 2px solid #f97316; /* Naranja */
-            background-color: #fff7ed; /* Naranja muy claro */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Estilo de los botones de respuesta */
-        .answer-button {
-            transition: all 0.2s;
-            @apply bg-white border border-gray-300 text-gray-800 hover:bg-gray-100;
-        }
-        .answer-button:hover:not(:disabled) {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .correct-answer {
-            @apply bg-green-500 text-white border-green-700 font-bold;
-        }
-        .incorrect-answer {
-            @apply bg-red-500 text-white border-red-700 font-bold;
-        }
-
-
-        /* Animación de entrada para el resultado */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .fade-in-up {
-            animation: fadeInUp 0.5s ease forwards;
-        }
-
-        /* Estilo para el contador de giros */
-        .counter-badge {
-            background: linear-gradient(135deg, #ff3864, #f91d51);
-            color: white;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 200px;
+            height: 200px;
+            background: rgba(0, 20, 0, 0.9);
+            border: 2px solid var(--cyber-purple);
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 24px;
             font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            text-align: center;
+            box-shadow: 0 0 15px var(--cyber-purple);
+            backface-visibility: hidden;
         }
 
-        /* Estilo para los iconos SVG dentro de la pirinola y resultados */
-        .pirinola-icon {
-            width: 2.5rem; /* Tamaño más grande para los iconos */
-            height: 2.5rem;
-            display: inline-block; /* Para que estén en línea con el texto */
-            vertical-align: middle;
-            margin-right: 0.5rem; /* Espacio entre el icono y el texto */
+        .front  { transform: translateZ(100px); background: rgba(20,0,20,0.9); }
+        .back   { transform: rotateY(180deg) translateZ(100px); }
+        .right  { transform: rotateY(90deg) translateZ(100px); }
+        .left   { transform: rotateY(-90deg) translateZ(100px); }
+        .top    { transform: rotateX(90deg) translateZ(100px); }
+        .bottom { transform: rotateX(-90deg) translateZ(100px); }
+
+        /* EL RESULTADO */
+        #result-panel {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid var(--neon-green);
+            background: rgba(0, 255, 65, 0.1);
+            max-width: 80%;
+            text-align: center;
+            display: none;
+            animation: fadeIn 0.5s ease;
         }
+
+        .btn-spin {
+            background: transparent;
+            border: 2px solid var(--neon-green);
+            color: var(--neon-green);
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-top: 20px;
+            box-shadow: 0 0 10px var(--neon-green);
+        }
+        .btn-spin:hover { background: var(--neon-green); color: black; }
+
+        [...](asc_slot://start-slot-1)@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
-<body class="p-4 sm:p-8 min-h-screen flex flex-col items-center">
+<body>
 
-    <!-- Header y Título --><header class="text-center mb-6">
-        <h1 class="text-3xl sm:text-4xl font-black text-red-600 mb-1">
-            Pirinola de Ciberseguridad Chalamandra™
-        </h1>
-        <p class="text-lg text-gray-700 italic">
-            <span class="font-bold text-violet-700">Ey *warriors* digitales 🐉,</span> ¡dale *spin* y *level-up*!
-        </p>
-        
-        <!-- Contador de giros --><div class="mt-4 flex items-center justify-center space-x-2">
-            <span class="text-gray-600 font-medium">Giros realizados:</span>
-            <div class="counter-badge" id="spin-counter">0</div>
+    <h1>/// PIRINOLA_SECURE_MODE ///</h1>
+
+    <div class="pirinola-container" onclick="spinPirinola()">
+        <div class="pirinola" id="pirinola">
+            <div class="face front">TOMA 1<br><small>Tip Malandra</small></div>
+            <div class="face back">PON 1<br><small>Password</small></div>
+            <div class="face right">TODOS<br><small>Actualizan</small></div>
+            <div class="face left">TOMA 2<br><small>Tools</small></div>
+            <div class="face top">PON 2<br><small>2FA</small></div>
+            <div class="face bottom">TOMA TODO<br><small>Jackpot</small></div>
         </div>
-    </header>
+    </div>
 
-    <!-- Contenedor del Juego --><main class="w-full max-w-lg">
+    <button class="btn-spin" onclick="spinPirinola()">GIRAR SISTEMA</button>
 
-        <!-- La Pirinola / Spinner -->
-        <!-- UX: aria-live="polite" para que los lectores de pantalla anuncien el resultado -->
-        <div id="pirinola-spinner" role="status" aria-live="polite" class="select-none">
-            <!-- Contenido inicial se inyecta por JS -->
-        </div>
-
-        <!-- Botón de Spin -->
-        <button id="spin-button" aria-label="Girar la Pirinola para obtener un Tip de Ciberseguridad" 
-                class="spin-button w-full text-white text-2xl font-bold p-4 rounded-full uppercase tracking-wider shadow-lg transform active:scale-98 focus:outline-none focus:ring-4 focus:ring-red-300">
-            ¡Dale Spin! 🎲
-        </button>
-
-        <!-- Área de Resultado (Tip + Pregunta) -->
-        <div id="result-container" class="result-box mt-8 p-6 rounded-xl border-2 border-blue-500 hidden" role="alert">
-            <h3 class="text-2xl font-extrabold text-blue-700 mb-2" id="result-title"></h3>
-            <p class="text-gray-800 text-base mb-4" id="result-tip"></p>
-
-            <!-- Sección de Pregunta (Modo Supervivencia Digital) -->
-            <div id="question-area" class="question-box p-4 rounded-lg hidden">
-                <p class="font-bold text-lg text-orange-700 mb-3" id="question-text">
-                    ¡MODO SUPERVIVENCIA! ¿Qué harías, *Warrior*?
-                </p>
-                <div id="answers-container" class="space-y-2" role="radiogroup" aria-labelledby="question-text">
-                    <!-- Los botones de respuesta se inyectan aquí -->
-                </div>
-                <!-- UX: Mensaje de feedback con rol de alerta para accesibilidad -->
-                <div id="feedback-message" class="mt-4 p-2 text-center rounded-lg font-semibold hidden" role="status" aria-live="assertive">
-                    <!-- Mensaje de retroalimentación (Correcto/Incorrecto) -->
-                </div>
-            </div>
-
-            <div class="mt-4 pt-4 border-t border-blue-300">
-                <p class="text-sm font-semibold text-gray-600">
-                    *Muestra tu resultado en los comentarios de LinkedIn con el hashtag #PirinolaDigital*
-                </p>
-            </div>
-        </div>
-        
-        <!-- Mensaje de Misión Completa -->
-        <div id="mission-complete-message" class="mt-4 p-4 text-center bg-green-500 text-white rounded-xl shadow-lg hidden">
-            <h4 class="text-xl font-black flex items-center justify-center">
-                ¡MISIÓN CHALAMANDRA COMPLETA! 🏆
-            </h4>
-            <p class="text-sm mt-1">
-                ¡Has obtenido todos los Tips! Eres un *Master* de la Ciberseguridad. ¡Sigue girando para practicar!
-            </p>
-        </div>
-
-
-    </main>
-
-    <!-- Footer / Espacio para el Tip Extra --><footer class="mt-12 w-full max-w-lg text-center p-4 bg-white rounded-lg shadow-inner">
-        <p class="text-sm font-medium text-gray-500">
-            <span class="text-red-500 font-bold">💡 Extra Tip Chola:</span> Siempre activa autenticación de dos factores. Dos pasos, cero drama, full *flow*.
-        </p>
-    </footer>
+    <div id="result-panel">
+        <h2 id="action-title">ESPERANDO INPUT...</h2>
+        <p id="action-desc"></p>
+    </div>
 
     <script>
-        // --- Constantes y datos de la Pirinola ---
-        const sides = [
-            { 
-                title: "Phishing Alert", 
-                tip: "Si huele raro, huele a hacker. No cliques, ¡reporta!", 
-                icon: '<svg class="pirinola-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.707-10.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L9.414 11H13a1 1 0 100-2H9.414l1.293-1.293z" clip-rule="evenodd"></path></svg>',
-                question: "¿Cuál es la señal MÁS CLARA de un email de Phishing?",
-                answers: [
-                    "Que tenga una firma con nombre y cargo.",
-                    "Que pida urgentemente tu contraseña o información financiera.",
-                    "Que use un logo de una empresa conocida.",
-                ],
-                correctIndex: 1
-            },
-            { 
-                title: "Malware Beast", 
-                tip: "Antivirus y actualizaciones son tu *armor* diario, ¡siempre al día!", 
-                icon: '<svg class="pirinola-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>',
-                question: "¿Por qué es clave actualizar tu software y sistema operativo?",
-                answers: [
-                    "Para tener nuevos colores en la interfaz.",
-                    "Para corregir vulnerabilidades de seguridad.",
-                    "Para que las apps sean más grandes.",
-                ],
-                correctIndex: 1
-            },
-            { 
-                title: "Cloud Watch", 
-                tip: "Tus datos en la nube tienen barrio. Revisa permisos y comparte solo con tu *crew* de confianza.", 
-                icon: '<svg class="pirinola-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>',
-                question: "Al guardar un archivo en la nube, ¿cuál es el riesgo principal a vigilar?",
-                answers: [
-                    "Que la conexión Wi-Fi sea muy rápida.",
-                    "Que el archivo tenga permisos de edición públicos sin querer.",
-                    "Que el nombre del archivo sea muy corto.",
-                ],
-                correctIndex: 1
-            },
-            { 
-                title: "Password Power", 
-                tip: "Contraseñas largas, *random*, y la regla de oro: ¡activa 2FA!", 
-                icon: '<svg class="pirinola-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2h2a2 2 0 012 2v5a2 2 0 01-2 2H3a2 2 0 01-2-2v-5a2 2 0 012-2h2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg>',
-                question: "¿Qué significa 2FA (Autenticación de Dos Factores)?",
-                answers: [
-                    "Usar dos contraseñas diferentes.",
-                    "Verificar tu identidad con algo que sabes (contraseña) y algo que tienes (código en el móvil).",
-                    "Cambiar tu contraseña cada dos meses.",
-                ],
-                correctIndex: 1
-            },
-            { 
-                title: "Teamwork Mode", 
-                tip: "¡Defensa conjunta! Comparte tips y manda *alerts* a tu equipo.", 
-                icon: '<svg class="pirinola-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM1.577 17H3v2H17v-2h1.423A2 2 0 0020 15.423V13.5A2.5 2.5 0 0017.5 11h-1.071c-.722 0-1.41.258-1.936.726l-2.064 1.864c-.496.447-1.206.447-1.702 0l-2.064-1.864C5.98 11.258 5.291 11 4.577 11H3.5A2.5 2.5 0 001 13.5v1.923A2 2 0 001.577 17z"></path></svg>',
-                question: "Si tu compañero recibe un email sospechoso, ¿cuál es el protocolo correcto?",
-                answers: [
-                    "Ignorarlo y seguir trabajando.",
-                    "Abrirlo tú para ver si es peligroso.",
-                    "Reportarlo al equipo de seguridad de inmediato.",
-                ],
-                correctIndex: 2
-            },
-            { 
-                title: "Hack & Learn", 
-                tip: "Reflexiona, ajusta tu estrategia, *level-up* sin drama. ¡Cada ataque es lección!", 
-                icon: '<svg class="pirinola-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg>',
-                question: "¿Cuál es el propósito principal de una retrospectiva de ciberseguridad?",
-                answers: [
-                    "Culpar a quien cometió el error.",
-                    "Identificar qué falló para mejorar los procesos de defensa.",
-                    "Decidir quién paga el café.",
-                ],
-                correctIndex: 1
-            },
-            { 
-                title: "Wi-Fi Wildcard", 
-                tip: "¡VPN es tu chaleco anti-balas! Nunca confíes en el Wi-Fi de la calle, *mi rey*.", 
-                icon: '<svg class="pirinola-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-2 0a6 6 0 11-12 0 6 6 0 0112 0zM9 9V7a1 1 0 012 0v2a1 1 0 01-2 0zm1 1c-1.105 0-2 .895-2 2h4c0-1.105-.895-2-2-2zm0 4a2 2 0 100-4 2 2 0 000 4z"></path></svg>',
-                question: "¿Qué herramienta te protege de escuchas en una red Wi-Fi pública?",
-                answers: [
-                    "Un antivirus.",
-                    "Un gestor de contraseñas.",
-                    "Una VPN (Red Privada Virtual).",
-                ],
-                correctIndex: 2
-            }
+        const pirinola = document.getElementById('pirinola');
+        const resultPanel = document.getElementById('result-panel');
+        const title = document.getElementById('action-title');
+        const desc = document.getElementById('action-desc');
+
+        // BASE DE DATOS CHALAMANDRA (Consejos y Castigos)
+        const actions = [
+            { side: 'front', rot: 'rotateX(0deg) rotateY(0deg)', label: 'TOMA 1: TIP MALANDRA', text: '💡 "Confiar pero verificar." Revisa los permisos de esa App que acabas de instalar. ¿De verdad necesita tu ubicación?' },
+            { side: 'back', rot: 'rotateX(0deg) rotateY(180deg)', label: 'PON 1: PASSWORD', text: '🔒 Castigo: Tu password es débil. Cámbialo AHORA por una frase de 4 palabras (ej: Caballo-Batería-Grapa-Correcto).' },
+            { side: 'right', rot: 'rotateX(0deg) rotateY(-90deg)', label: 'TODOS PONEN: UPDATE', text: '🚨 ¡Alerta Global! Todos los presentes deben buscar actualizaciones en su teléfono ahora mismo. El que no actualice, paga los tacos.' },
+            { side: 'left', rot: 'rotateX(0deg) rotateY(90deg)', label: 'TOMA 2: TOOLS', text: '🛠️ Ganaste acceso: 1. [...](asc_slot://start-slot-3)Descarga NEURO-SHIELD. 2. Activa un Gestor de Contraseñas. ¡Vámonos recio!' },
+            { side: 'top', rot: 'rotateX(-90deg) rotateY(0deg)', label: 'PON 2: DOBLE FACTOR', text: '🛡️ Tarea Doble: Activa la verificación en 2 pasos (2FA) en tu WhatsApp y en tu Correo. ¡Sin excusas!' },
+            { side: 'bottom', rot: 'rotateX(90deg) rotateY(0deg)', label: 'TOMA TODO: JACKPOT', text: '💎 ¡HACKER SUPREMO! Has evadido el phishing hoy. Te ganaste un descanso de 5 minutos lejos de la pantalla.' }
         ];
 
-        // Variables de estado del juego
-        let spinCount = 0;
-        let lastResult = null;
-        let obtainedSides = new Set(); // Para la Misión Completa
-        let currentResult = null; // Almacena el objeto del lado actual para la pregunta
+        let isSpinning = false;
 
-        const apiKey = ""; // La API Key se inyectará automáticamente en el runtime.
-        const apiUrl = ""; // Esta app es un minijuego, no necesita llamar al LLM.
-
-        // --- Configuración de Sonido con Tone.js (Mejora UX) ---
-        let spinSynth;
-        let correctSynth;
-        let incorrectSynth;
-
-        function initializeAudio() {
-            // Un poly-synth para tonos simples (para el spin)
-            spinSynth = new Tone.PolySynth(Tone.Synth, {
-                oscillator: { type: "square" },
-                envelope: { attack: 0.005, decay: 0.1, sustain: 0.1, release: 0.1 },
-            }).toDestination();
-
-            // Un synth para el sonido correcto (triunfal)
-            correctSynth = new Tone.Synth({
-                oscillator: { type: "triangle" },
-                envelope: { attack: 0.005, decay: 0.8, sustain: 0.01, release: 0.5 },
-            }).toDestination();
-
-            // Un synth para el sonido incorrecto (error)
-            incorrectSynth = new Tone.Synth({
-                oscillator: { type: "sine" },
-                envelope: { attack: 0.005, decay: 0.2, sustain: 0.05, release: 0.5 },
-            }).toDestination();
-            
-            // UX: Desactivar el autostart de audio hasta que haya interacción
-            Tone.context.lookAhead = 0.01;
-        }
-
-        // Toca un sonido de inicio/giro
-        function playSpinSound() {
-            // UX: Muteo el audio si Tone.js no está iniciado (primera interacción)
-            if (Tone.context.state !== 'running') { Tone.start(); }
-            
-            // Toca una secuencia de notas rápida para simular el giro
-            spinSynth.triggerAttackRelease(["C4", "E4", "G4", "A4"], "16n");
-        }
-
-        // Toca un sonido de resultado
-        function playResultSound() {
-            // Toca una nota alta para indicar éxito en la obtención del tip
-            spinSynth.triggerAttackRelease("C5", "4n", Tone.now() + 0.1);
-        }
-
-        // Toca el sonido de respuesta correcta
-        function playCorrectSound() {
-            correctSynth.triggerAttackRelease("G4", "8n");
-            correctSynth.triggerAttackRelease("C5", "4n", Tone.now() + 0.1); // Tono de victoria
-        }
-
-        // Toca el sonido de respuesta incorrecta
-        function playIncorrectSound() {
-            incorrectSynth.triggerAttackRelease("C3", "8n");
-            incorrectSynth.triggerAttackRelease("A2", "4n", Tone.now() + 0.1); // Tono de error
-        }
-
-
-        // Función para seleccionar un lado aleatorio
         function spinPirinola() {
-            let newIndex;
-            // Evitar que salga el mismo resultado dos veces seguidas
-            do {
-                newIndex = Math.floor(Math.random() * sides.length);
-            } while (newIndex === lastResult && sides.length > 1);
-            
-            lastResult = newIndex;
-            return newIndex;
-        }
+            if (isSpinning) return;
+            isSpinning = true;
+            resultPanel.style.display = 'none';
 
-        // --- Funciones de Lógica de Pregunta y Respuesta ---
-
-        // Función que se ejecuta al clickear un botón de respuesta
-        function handleAnswerClick(selectedIndex, button) {
-            const isCorrect = selectedIndex === currentResult.correctIndex;
-            const answersContainer = document.getElementById('answers-container');
-            const feedbackMessage = document.getElementById('feedback-message');
-            const answerButtons = answersContainer.querySelectorAll('button');
+            // Generar giro aleatorio (mínimo 2 vueltas completas + aleatorio)
+            const randomResult = Math.floor(Math.random() * actions.length);
+            const selected = actions[randomResult];
             
-            // 1. Deshabilitar todos los botones de respuesta
-            answerButtons.forEach((btn, index) => {
-                btn.disabled = true;
+            // Simular caos (rotación loca)
+            const extraSpins = 360 * 5; 
+            
+            // Nota: Esta lógica de rotación es simplificada para web. 
+            // En una app 3D real usaríamos cuaterniones, pero esto funciona para el efecto visual.
+            // Para que coincida la cara, "deshacemos" la rotación de la cara seleccionada al final.
+            
+            // Hack visual: simplemente rotamos mucho y caemos en cualquier lado, 
+            // pero mostramos el texto correspondiente a la suerte.
+            
+            pirinola.style.transform = `rotateX(${Math.random() * 720 + 720}deg) rotateY(${Math.random() * 720 + 720}deg)`;
+
+            setTimeout(() => {
+                // Estabilizar en la cara ganadora (esto es el truco de magia)
+                pirinola.style.transition = 'transform 1s cubic-bezier(0.1, 0.7, 0.1, 1)';
+                // Invertimos la rotación de la cara para que quede al frente
+                // Nota: En CSS puro esto requiere cálculos matriciales complejos.
+                // Para este MVP, reseteamos a la posición de la cara ganadora:
+                pirinola.style.transform = selected.rot;
                 
-                // 2. Marcar la respuesta correcta e incorrecta
-                if (index === currentResult.correctIndex) {
-                    btn.classList.add('correct-answer');
-                } else if (index === selectedIndex) {
-                    btn.classList.add('incorrect-answer');
-                } else {
-                    // Remover estilos de hover de los botones no seleccionados
-                    btn.classList.remove('hover:bg-gray-100'); 
-                    btn.classList.add('bg-gray-200'); 
-                }
-            });
-            
-            // 3. Reproducir sonido y mostrar el mensaje de retroalimentación
-            feedbackMessage.classList.remove('hidden');
-            feedbackMessage.classList.remove('bg-green-100', 'bg-red-100');
-            feedbackMessage.classList.remove('text-green-800', 'text-red-800');
-
-            if (isCorrect) {
-                playCorrectSound(); // Sonido de acierto
-                feedbackMessage.classList.add('bg-green-100', 'text-green-800');
-                feedbackMessage.innerHTML = '¡Felicidades, Warrior! 🔥 Respuesta correcta. ¡Full *flow* y seguridad!';
-            } else {
-                playIncorrectSound(); // Sonido de error
-                feedbackMessage.classList.add('bg-red-100', 'text-red-800');
-                feedbackMessage.innerHTML = '¡Ajusta tu estrategia! 🛡️ Respuesta incorrecta. Vuelve a leer el Tip y ¡a seguir practicando!';
-            }
-
-            // UX: Enfocar el mensaje de feedback para accesibilidad
-            feedbackMessage.focus();
-            
-            // Scroll hacia el mensaje de feedback
-            feedbackMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-
-
-        // Función para renderizar el área de pregunta
-        function renderQuestionArea() {
-            const questionArea = document.getElementById('question-area');
-            const questionText = document.getElementById('question-text');
-            const answersContainer = document.getElementById('answers-container');
-            const feedbackMessage = document.getElementById('feedback-message');
-
-            // Limpiar área de respuestas y feedback
-            answersContainer.innerHTML = '';
-            feedbackMessage.classList.add('hidden');
-            feedbackMessage.className = 'mt-4 p-2 text-center rounded-lg font-semibold hidden'; // Reset de clases
-            
-            // UX: Remover el tabindex que se usa para el focus en el feedback
-            feedbackMessage.removeAttribute('tabindex');
-
-            // Configurar la pregunta
-            questionText.innerHTML = `¡MODO SUPERVIVENCIA! ${currentResult.question}`;
-            
-            // Crear botones de respuesta
-            currentResult.answers.forEach((answer, index) => {
-                const button = document.createElement('button');
-                button.textContent = answer;
-                button.className = 'answer-button w-full p-3 rounded-lg text-left shadow-sm focus:outline-none';
-                // Pasar el botón como argumento para manejar el foco/estado
-                button.onclick = () => handleAnswerClick(index, button); 
-                answersContainer.appendChild(button);
-            });
-            
-            questionArea.classList.remove('hidden');
-            // UX: Enfocar el primer botón de respuesta al mostrar la pregunta
-            answersContainer.querySelector('button').focus();
-        }
-
-
-        // --- Funciones de Interfaz y Lógica del Juego ---
-        function initGame() {
-            const spinButton = document.getElementById('spin-button');
-            const pirinolaSpinner = document.getElementById('pirinola-spinner');
-            const resultTitle = document.getElementById('result-title');
-            const resultTip = document.getElementById('result-tip');
-            const resultContainer = document.getElementById('result-container');
-            const spinCounter = document.getElementById('spin-counter');
-            const missionCompleteMessage = document.getElementById('mission-complete-message'); 
-            
-            // Inicializar el audio
-            initializeAudio();
-
-            // Establecer el estado inicial
-            pirinolaSpinner.innerHTML = '¡Dale Spin para Proteger tu Barrio Digital! 💻🔒';
-            resultContainer.classList.add('hidden');
-            
-            if (missionCompleteMessage) { 
-                missionCompleteMessage.classList.add('hidden'); // Ocultar mensaje de misión completa al inicio
-            }
-
-            spinButton.addEventListener('click', () => {
-                if (spinButton.disabled) return;
-                
-                playSpinSound(); // Sonido de inicio de giro
-
-                // 1. Deshabilitar botón y comenzar animación
-                spinButton.disabled = true;
-                spinButton.textContent = 'Girando... 🌀';
-                pirinolaSpinner.classList.add('spinning');
-                pirinolaSpinner.innerHTML = '¡Giro Magistral! 💃';
-                resultContainer.classList.add('hidden');
-                
-                if (missionCompleteMessage) {
-                    missionCompleteMessage.classList.add('hidden'); // Asegurarse de que el mensaje esté oculto
-                }
-
-                // Ocultar el área de pregunta antes de girar
-                document.getElementById('question-area').classList.add('hidden');
-
-                // 2. Determinar el resultado aleatorio
-                const randomIndex = spinPirinola();
-                const result = sides[randomIndex];
-                currentResult = result; // Almacenar el resultado actual
-
-                // 3. Simular el tiempo de giro (3 segundos = duración de la animación CSS)
                 setTimeout(() => {
-                    playResultSound(); // Sonido al terminar el giro
-
-                    // 4. Detener animación y mostrar resultado
-                    pirinolaSpinner.classList.remove('spinning');
-                    pirinolaSpinner.style.transform = 'rotate(0deg)'; // Reinicia la rotación visual
-                    pirinolaSpinner.innerHTML = `<span class="text-xl flex items-center justify-center">${result.icon} ${result.title}</span>`; // Mostrar el icono y título del reto
-
-                    resultTitle.innerHTML = `<span class="flex items-center justify-center">${result.icon} ${result.title}</span>`;
-                    resultTip.innerHTML = `**Tip Chalamandra:** ${result.tip}`;
-                    resultContainer.classList.remove('hidden');
-                    resultContainer.classList.add('fade-in-up');
-                    
-                    // 5. Renderizar la pregunta
-                    renderQuestionArea();
-
-                    // 6. Actualizar contador
-                    spinCount++;
-                    spinCounter.textContent = spinCount;
-                    
-                    // 7. Actualizar el set de lados obtenidos para la Misión Completa
-                    obtainedSides.add(randomIndex);
-                    if (obtainedSides.size === sides.length && missionCompleteMessage) {
-                        missionCompleteMessage.classList.remove('hidden');
-                        missionCompleteMessage.classList.add('fade-in-up'); // Animación para el mensaje de misión completa
-                    }
-
-                    // 8. Habilitar botón
-                    spinButton.disabled = false;
-                    spinButton.textContent = '¡Dale Spin otra vez! 🔄';
-
-                    // Scroll hacia el resultado en móviles
-                    resultContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
-                }, 3000); // 3000ms para que coincida con la transición CSS
-            });
+                    showResult(selected);
+                    isSpinning = false;
+                }, 1000);
+            }, 3000);
         }
 
-        window.onload = initGame;
+        [...](asc_slot://start-slot-5)function showResult(data) {
+            resultPanel.style.display = 'block';
+            title.innerText = data.label;
+            desc.innerText = data.text;
+        }
     </script>
-
 </body>
 </html>
