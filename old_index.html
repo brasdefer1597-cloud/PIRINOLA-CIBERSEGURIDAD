@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHALAMANDRA // COGNITIVE ENGINE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --core-light: #e0e0e0;
+            --signal-green: #4af626;
+            --noise-yellow: #f6d426;
+            --error-red: #ff2a2a;
+            --shield-blue: #26c6f6;
+            --void-bg: #050505;
+            --glass-panel: rgba(255, 255, 255, 0.05);
+        }
+        body {
+            background-color: var(--void-bg);
+            color: var(--core-light);
+            font-family: 'Space Mono', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            background-image: radial-gradient(circle at 50% 50%, #111 0%, #000 100%);
+        }
+
+        /* HEADER SUTIL */
+        header {
+            position: absolute;
+            top: 40px;
+            letter-spacing: 2px;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            text-transform: uppercase;
+        }
+
+        /* CONTENEDOR DE LA PIRINOLA (MOTOR) */
+        .engine-container {
+            width: 250px;
+            height: 250px;
+            perspective: 1200px;
+            cursor: pointer;
+            position: relative;
+            z-index: 10;
+        }
+
+        .pirinola {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 2.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        /* CARAS DEL ARTEFACTO */
+        .face {
+            position: absolute;
+            width: 240px;
+            height: 240px;
+            background: rgba(10, 10, 10, 0.95);
+            border: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            backface-visibility: hidden; /* Ocultar caras traseras para limpieza */
+        }
+
+        .face h3 { margin: 0; font-size: 2rem; margin-bottom: 10px; }
+        .face span { font-size: 0.8rem; opacity: 0.8; }
+
+        /* Posicionamiento Cubo (Metáfora Visual) */
+        .front  { transform: translateZ(120px); border-color: var(--signal-green); color: var(--signal-green); }
+        .back   { transform: rotateY(180deg) translateZ(120px); border-color: var(--error-red); color: var(--error-red); }
+        .right  { transform: rotateY(90deg) translateZ(120px); border-color: var(--shield-blue); color: var(--shield-blue); }
+        .left   { transform: rotateY(-90deg) translateZ(120px); border-color: var(--noise-yellow); color: var(--noise-yellow); }
+        .top    { transform: rotateX(90deg) translateZ(120px); border-color: white; color: white; }
+        .bottom { transform: rotateX(-90deg) translateZ(120px); border-color: #bd26f6; color: #bd26f6; }
+
+        /* INTERFAZ DE DECODIFICACIÓN (RESULTADO) */
+        #decode-panel {
+            margin-top: 60px;
+            width: 80%;
+            max-width: 500px;
+            text-align: left;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease;
+        }
+
+        #decode-panel.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .panel-header {
+            font-size: 0.7rem;
+            color: #666;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        #action-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+        }
+
+        #action-desc {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #ccc;
+        }
+
+        .micro-rule {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            padding: 10px;
+            background: var(--glass-panel);
+            border-left: 3px solid var(--core-light);
+        }
+
+        .btn-spin {
+            margin-top: 40px;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 12px 30px;
+            font-family: 'Space Mono', monospace;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 1px;
+        }
+        .btn-spin:hover {
+            background: white;
+            color: black;
+            border-color: white;
+        }
+
+        /* FOOTER NAVIDEÑO SUTIL */
+        .seasonal-msg {
+            position: absolute;
+            bottom: 20px;
+            font-size: 0.7rem;
+            color: #444;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>/// SYSTEM_DECODE_MAGIS v12.0</header>
+
+    <div class="engine-container" onclick="spinEngine()">
+        <div class="pirinola" id="pirinola">
+            <div class="face front"><h3>SEÑAL</h3><span>Claridad</span></div>
+            <div class="face back"><h3>ERROR</h3><span>Humano</span></div>
+            <div class="face right"><h3>ESCUDO</h3><span>Activo</span></div>
+            <div class="face left"><h3>RUIDO</h3><span>Exceso</span></div>
+            <div class="face top"><h3>PATRÓN</h3><span>Colectivo</span></div>
+            <div class="face bottom"><h3>INTRUSO</h3><span>Externo</span></div>
+        </div>
+    </div>
+
+    <button class="btn-spin" onclick="spinEngine()">INICIAR GIRO</button>
+
+    <div id="decode-panel">
+        <div class="panel-header">
+            <span>EVENT_LOG: <span id="timestamp">--:--:--</span></span>
+            <span>STATUS: DECODED</span>
+        </div>
+        <h2 id="action-title"></h2>
+        <p id="action-desc"></p>
+        <div class="micro-rule" id="micro-rule"></div>
+    </div>
+
+    <div class="seasonal-msg">"No todo lo que llega envuelto merece abrirse."</div>
+
+    <script>
+        const pirinola = document.getElementById('pirinola');
+        const panel = document.getElementById('decode-panel');
+        const title = document.getElementById('action-title');
+        const desc = document.getElementById('action-desc');
+        const rule = document.getElementById('micro-rule');
+        const timestamp = document.getElementById('timestamp');
+
+        // MATRIZ DE CODIFICACIÓN MAGISTRAL
+        const outcomes = [
+            {
+                id: 'signal',
+                rot: 'rotateX(0deg) rotateY(0deg)',
+                label: 'SEÑAL CLARA 🟢',
+                text: 'Detectaste una señal limpia en medio del caos. Tu criterio digital filtró el ruido correctamente.',
+                rule: '🧠 MICRO-REGLA: Confía en tu intuición técnica. Si se siente seguro y verificaste, avanza.'
+            },
+            {
+                id: 'error',
+                rot: 'rotateX(0deg) rotateY(180deg)',
+                label: 'ERROR HUMANO 🔴',
+                text: 'Fallaste. Y está bien. El error no es debilidad, es una grieta por donde entra la luz (y el aprendizaje).',
+                rule: '🧠 MICRO-REGLA: No culpes al usuario. Revisa el sistema que permitió el error.'
+            },
+            {
+                id: 'noise',
+                rot: 'rotateX(0deg) rotateY(90deg)',
+                label: 'RUIDO 🟡',
+                text: 'Demasiados estímulos compitiendo por tu atención. No todo requiere tu clic ni tu acción inmediata.',
+                rule: '🧠 MICRO-REGLA: La pausa cognitiva es tu mejor antivirus.'
+            },
+            {
+                id: 'shield',
+                rot: 'rotateX(0deg) rotateY(-90deg)',
+                label: 'ESCUDO ACTIVO 🛡️',
+                text: 'No solo bloqueaste una amenaza; entendiste el "por qué" detrás del ataque. Eso es verdadera defensa.',
+                rule: '🧠 MICRO-REGLA: La herramienta (Neuro-Shield) es inútil sin el criterio del operador.'
+            },
+            {
+                id: 'pattern',
+                rot: 'rotateX(-90deg) rotateY(0deg)',
+                label: 'PATRÓN 🧩',
+                text: 'Este evento ya ha ocurrido antes. Reconocer que internet es un sistema cíclico te da ventaja.',
+                rule: '🧠 MICRO-REGLA: Lo que afecta a uno, afecta a la red. Comparte este hallazgo.'
+            },
+            {
+                id: 'intruder',
+                rot: 'rotateX(90deg) rotateY(0deg)',
+                label: 'INTRUSIÓN 🦠',
+                text: 'Alguien intentó influir en tu decisión. La ingeniería social opera en los huecos de tu emoción, no en tu firewall.',
+                rule: '🧠 MICRO-REGLA: Si genera urgencia o miedo artificial, es manipulación.'
+            }
+        ];
+
+        let isSpinning = false;
+
+        function spinEngine() {
+            if (isSpinning) return;
+            isSpinning = true;
+            panel.classList.remove('active');
+
+            // Selección Aleatoria Controlada
+            const randomIndex = Math.floor(Math.random() * outcomes.length);
+            const selected = outcomes[randomIndex];
+
+            // Giro Orbital
+            const rotations = 5; // Vueltas completas
+            const xRot = Math.random() * 360 + (rotations * 360);
+            const yRot = Math.random() * 360 + (rotations * 360);
+
+            pirinola.style.transform = `rotateX(${xRot}deg) rotateY(${yRot}deg)`;
+
+            setTimeout(() => {
+                // Aterrizaje Suave
+                pirinola.style.transition = 'transform 1.5s cubic-bezier(0.1, 0.7, 0.1, 1)';
+                pirinola.style.transform = selected.rot;
+
+                setTimeout(() => {
+                    displayDecode(selected);
+                    isSpinning = false;
+                }, 1500);
+            }, 2500);
+        }
+
+        function displayDecode(data) {
+            const now = new Date();
+            timestamp.innerText = now.toLocaleTimeString();
+
+            title.innerText = data.label;
+            title.style.color = getComputedStyle(document.querySelector(`.face.${data.id === 'signal' ? 'front' : data.id === 'error' ? 'back' : data.id === 'noise' ? 'left' : data.id === 'shield' ? 'right' : data.id === 'pattern' ? 'top' : 'bottom'}`)).color;
+
+            desc.innerText = data.text;
+            rule.innerText = data.rule;
+            panel.classList.add('active');
+        }
+    </script>
+</body>
+</html>

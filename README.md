@@ -1,43 +1,36 @@
-🐉 Pirinola de Ciberseguridad Chalamandra™: ¡Full Flow!
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-Un minijuego interactivo, educativo y con un toque de flow para elevar tu defensa digital.
+## Getting Started
 
-🎯 Objetivo
+First, run the development server:
 
-El propósito de esta Pirinola Digital es convertir la educación en ciberseguridad en una experiencia dinámica. Cada giro revela un "Tip Chalamandra" esencial (como Phishing, Malware, o 2FA) y te desafía con una pregunta de opción múltiple inmediata.
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-✨ Características Principales
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-Tips Esenciales: 7 lados con los consejos de seguridad más críticos para el día a día.
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-Modo Supervivencia Digital: Después de cada Tip, responde una pregunta para confirmar tu conocimiento y recibir retroalimentación instantánea (¡sin contador de puntos, solo aprendizaje!).
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-Experiencia Flow: Diseño visual atractivo (Chalamandra Aesthetics), animaciones suaves y sonidos interactivos gracias a Tone.js.
+## Learn More
 
-Misión Completa: Seguimiento de los Tips obtenidos para saber cuándo has dominado todos los conceptos.
+To learn more about Next.js, take a look at the following resources:
 
-🛠️ Tecnología Utilizada
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-Este proyecto es una aplicación web estática y de alto rendimiento construida con:
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-HTML5: Estructura base.
+## Deploy on Vercel
 
-Tailwind CSS: Estilos y diseño completamente responsivo.
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-JavaScript (Vanilla JS): Lógica del juego, manejo de estado y el mecanismo de giro aleatorio.
-
-Tone.js: Generación de sonidos interactivos (spin, acierto y error) para una mejor UX.
-
-🚀 Cómo Jugar
-
-Haz clic en el botón "¡Dale Spin!".
-
-El spinner te revelará un Tip Chalamandra.
-
-Responde la pregunta del "Modo Supervivencia Digital" que aparece abajo.
-
-¡Sigue girando para practicar y obtener la Misión Chalamandra Completa!
-
-#Hashtags Chalamandra
-
-#Ciberseguridad #PhishingAlert #2FA #VPN #WarriorDigital #Minijuego #AprendizajeInteractivo #ToneJs #Frontend
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
